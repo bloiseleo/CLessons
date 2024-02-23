@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define MAX_TRIES 10
+
 void opening() {
 	printf("*******************\n");
 	printf("*  Jogo da Forca  *\n");
@@ -18,11 +20,35 @@ char* createPlaceholders(char* word) {
 	return placeholders;
 }
 
-void checkQuick(char* placeholders, char* secret, char quick) {
+int checkQuick(char* placeholders, char* secret, char quick) {
+	int changed = 0;
 	for(int i = 0; i < strlen(secret); i++) {
 		if(secret[i] == quick) {
+			changed++;
 			placeholders[i] = quick;
 		}
+	}
+	return changed;
+}
+
+int checkWin(char* placeholders, char* word) {
+	int equals = 0;
+	for(int i = 0; i < strlen(word); i++) {
+		if(word[i] == placeholders[i]) {
+			equals++;	
+		}
+	}
+	return equals == strlen(word);
+}
+
+void drawForca(char* placeholders, char * secret, int* tries) {
+	printf("%s\n", placeholders);
+	char quick;
+	printf("Type your quick:");
+	scanf(" %c", &quick);
+	printf("O seu chute foi: %c", quick);
+	if(checkQuick(placeholders, secret, quick) == 0) {
+		(*tries)++;
 	}
 }
 
@@ -31,17 +57,23 @@ int main() {
 	char* placeholders = createPlaceholders(secret);
 	int right = 0;
 	int killed = 0;
+	int tries = 0;
 	opening();
 	do {
-		printf("%s\n", placeholders);
-		char quick;
-		printf("Type your quick:");
-		fflush(stdout);
-		scanf(" %c", &quick);
-		printf("O seu chute foi: %c", quick);
-		checkQuick(placeholders, secret, quick);	
+		drawForca(placeholders, secret, &tries);
+		if(checkWin(placeholders, secret) > 0) {
+			right = 1;
+		}
+		if(tries >= MAX_TRIES) {
+			killed = 1;
+		}
 		printf("\n");
 	} while(!killed && !right);
+	if(right > 0 && killed == 0) {
+		printf("You won!\n");
+	} else {
+		printf("You lose!\n");
+	}
 	return 0;
 }
 
