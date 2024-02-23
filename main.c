@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAX_TRIES 10
 
@@ -52,8 +53,24 @@ void drawForca(char* placeholders, char * secret, int* tries) {
 	}
 }
 
+char* chooseSecretWord() {
+	int qtd;	
+	char* secret = malloc(sizeof(char));
+	FILE* f = fopen("palavras.txt", "r");
+	fscanf(f, "%d", &qtd);
+	qtd++;
+	srand(time(0));
+	int random = rand() % qtd;
+	if(random == 0) random = 1;
+	for(int i = 0; i < random; i++) {
+		fscanf(f, "%s", secret);
+	}
+	fclose(f);
+	return secret;
+}	
+
 int main() {
-	char secret[] = "SECRET_WORD";
+	char* secret = chooseSecretWord();
 	char* placeholders = createPlaceholders(secret);
 	int right = 0;
 	int killed = 0;
