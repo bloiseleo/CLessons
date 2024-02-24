@@ -98,6 +98,33 @@ char *chooseSecretWord() {
   return secret;
 }
 
+void writeNewWord() {
+  char option;
+  printf("Do You want to add a new Word? (S\\N)");
+  scanf(" %c", &option);
+
+  if (option == 'N') {
+    return;
+  }
+  char newWord[20];
+  printf("Type your word:\n");
+  scanf("%s", newWord);
+  FILE *fp = fopen("palavras.txt", "r+");
+  if (fp == NULL) {
+    printf("Could not open the database\n");
+    exit(1);
+  }
+  int qtd;
+  fscanf(fp, "%d", &qtd);
+  qtd++;
+  rewind(fp);
+  fprintf(fp, "%d", qtd);
+  fseek(fp, 0, SEEK_END);
+  fprintf(fp, "%s\n", newWord);
+  fclose(fp);
+  return;
+}
+
 int main() {
   char *secret = chooseSecretWord();
   char *placeholders = createPlaceholders(secret);
@@ -120,5 +147,6 @@ int main() {
   } else {
     printf("You lose!\n");
   }
+  writeNewWord();
   return 0;
 }
