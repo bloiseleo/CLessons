@@ -1,0 +1,1 @@
+char** Map_new(char* pathToMap);
