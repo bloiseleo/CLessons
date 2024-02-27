@@ -7,7 +7,6 @@ int end() {
 }
 
 int main() {
-    
     Map* map = Map_new("./mapa.txt");
     do {
         Map_printf(map);
@@ -15,6 +14,5 @@ int main() {
         scanf(" %c", &direction);
         Map_movePlayer(map, direction);
     } while(!end());
-
     return 0;
 }

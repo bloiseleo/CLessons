@@ -6,6 +6,47 @@
 #include "filereading.h"
 #include "map.h"
 
+void Map_findGhosts(Map* map) {
+    int bufferSize = 1;
+    int read = 0;
+    Position* buff = malloc(sizeof(Position) * bufferSize);
+    for(int i = 0; i < map->lines; i++) {
+        for(int j = 0; j < map->columns; j++) {
+            if(map->map[i][j] == GHOST) {
+                if(read >= bufferSize) {
+                    bufferSize *= 2;
+                    buff = realloc(buff, sizeof(Position) * bufferSize);
+                }
+                Position p = {
+                    .x = i,
+                    .y = j
+                };
+                buff[read++] = p;
+            }
+        }
+    }
+    map->ghostsPosition = realloc(buff, sizeof(Position) * read);
+    map->ghostsSize = read;
+}
+
+int Map_canMove(int x, int y, Map* map) {
+    if(x <= 0 || y <=0 || x >= map->lines || y >= map->columns) {
+        return 0;
+    }
+    if (map->map[x][y] != '.') {
+        return 0;
+    }
+    return 1;
+}
+
+void Map_movePlayerCharacter(int x, int y, Map* map) {
+    Position* hp = map->heroPosition;
+    map->map[hp->x][hp->y] = '.';
+    hp->x = x;
+    hp->y = y;
+    map->map[hp->x][hp->y] = PLAYER;
+}
+
 Position* Map_find(Map* map, char c) {
     int x;
     int y;
@@ -48,31 +89,25 @@ void Map_movePlayer(Map* map, char direction) {
     int newX = hp->x;
     int newY = hp->y;
     switch(direction) {
-        case 'a':
+        case LEFT:
             --newY;
             break;
-        case 'd':
+        case RIGHT:
             ++newY;
             break;
-        case 'w':
+        case UP:
             --newX;
             break;
-        case 's':
+        case DOWN:
             ++newX;
             break;
         default:
             break;
     }
-    if(newX <= 0 || newY <=0 || newX >= map->lines || newY >= map->columns) {
+    if(!Map_canMove(newX, newY, map)) {
         return;
     }
-    if (map->map[newX][newY] != '.') {
-        return;
-    }
-    map->map[hp->x][hp->y] = '.';
-    hp->x = newX;
-    hp->y = newY;
-    map->map[hp->x][hp->y] = '@';
+    Map_movePlayerCharacter(newX, newY, map);
 }
 
 void Map_printf(Map* m) {
@@ -104,6 +139,7 @@ Map* Map_new(char* pathToMap) {
         exit(1);
     }
     map->heroPosition = p;
+    Map_findGhosts(map);
     return map;
 }
 
