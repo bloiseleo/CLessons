@@ -6,6 +6,16 @@
 #include "filereading.h"
 #include "map.h"
 
+int Map_canMove(int x, int y, Map* map) {
+    if(x <= 0 || y <=0 || x >= map->lines || y >= map->columns) {
+        return 0;
+    }
+    if (map->map[x][y] != FREE_SPACE) {
+        return 0;
+    }
+    return 1;
+}
+
 void Map_findGhosts(Map* map) {
     int bufferSize = 1;
     int read = 0;
@@ -29,19 +39,23 @@ void Map_findGhosts(Map* map) {
     map->ghostsSize = read;
 }
 
-int Map_canMove(int x, int y, Map* map) {
-    if(x <= 0 || y <=0 || x >= map->lines || y >= map->columns) {
-        return 0;
+void Map_moveGhosts(Map* map) {
+    for (int i = 0; i < map->ghostsSize; i++) {
+        Position gp = map->ghostsPosition[i];
+        int newY = gp.y + 1;
+        if(!Map_canMove(gp.x, newY, map)){
+            continue;
+        }
+        map->map[gp.x][gp.y] = FREE_SPACE;
+        gp.y = newY;
+        map->map[gp.x][gp.y] = GHOST;
+        map->ghostsPosition[i] = gp;
     }
-    if (map->map[x][y] != '.') {
-        return 0;
-    }
-    return 1;
 }
 
 void Map_movePlayerCharacter(int x, int y, Map* map) {
     Position* hp = map->heroPosition;
-    map->map[hp->x][hp->y] = '.';
+    map->map[hp->x][hp->y] = FREE_SPACE;
     hp->x = x;
     hp->y = y;
     map->map[hp->x][hp->y] = PLAYER;
@@ -85,6 +99,7 @@ Map* createMapArr(FILE* mapFile) {
 }
 
 void Map_movePlayer(Map* map, char direction) {
+    Map_moveGhosts(map);
     Position* hp = map->heroPosition;
     int newX = hp->x;
     int newY = hp->y;
