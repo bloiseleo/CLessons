@@ -1,8 +1,19 @@
-typedef struct {
+struct position {
+    int x;
+    int y;
+};
+
+
+typedef struct position Position;
+
+struct map {
     char** map;
     int lines;
     int columns;
-} Map;
+    Position* heroPosition;
+};
+
+typedef struct map Map;
 
 Map* Map_new(char* pathToMap);
 void Map_printf(Map* map);

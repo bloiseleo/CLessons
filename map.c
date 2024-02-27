@@ -4,12 +4,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "filereading.h"
+#include "map.h"
 
-typedef struct {
-    char** map;
-    int lines;
-    int columns;
-} Map;
+Position* Map_find(Map* map, char c) {
+    int x;
+    int y;
+    int found = 0;
+    for (int i = 0; i < map->lines; i++) {
+        if(found != 0) {
+            break;
+        }
+        for (int j = 0; j < map->columns; j++) {
+            if(map->map[i][j] == c) {
+                x = i;
+                y = j;
+                found++;
+                break;
+            }
+        }
+    }
+    if(found) {
+        Position* p = malloc(sizeof(Position));
+        p->x = x;
+        p->y = y;
+        return p;
+    }
+    return NULL;
+}
 
 Map* createMapArr(FILE* mapFile) {
     Map* map = malloc(sizeof(Map));
@@ -23,39 +44,35 @@ Map* createMapArr(FILE* mapFile) {
 }
 
 void Map_movePlayer(Map* map, char direction) {
-    int x;
-    int y;
-    int found = 0;
-    for (int i = 0; i < map->lines; i++) {
-        if(found != 0) {
-            break;
-        }
-        for (int j = 0; j < map->columns; j++) {
-            if(map->map[i][j] == '@') {
-                x = i;
-                y = j;
-                found++;
-                break;
-            }
-        }
-    }
+    Position* hp = map->heroPosition;
+    int newX = hp->x;
+    int newY = hp->y;
     switch(direction) {
         case 'a':
-            map->map[x][y-1] = '@';
+            --newY;
             break;
         case 'd':
-            map->map[x][y+1] = '@';
+            ++newY;
             break;
         case 'w':
-            map->map[x-1][y] = '@';
+            --newX;
             break;
         case 's':
-            map->map[x+1][y] = '@';
+            ++newX;
             break;
         default:
             break;
     }
-    map->map[x][y] = '.';
+    if(newX <= 0 || newY <=0 || newX >= map->lines || newY >= map->columns) {
+        return;
+    }
+    if (map->map[newX][newY] != '.') {
+        return;
+    }
+    map->map[hp->x][hp->y] = '.';
+    hp->x = newX;
+    hp->y = newY;
+    map->map[hp->x][hp->y] = '@';
 }
 
 void Map_printf(Map* m) {
@@ -81,6 +98,12 @@ Map* Map_new(char* pathToMap) {
         sprintf(map->map[i], "%s", line);
     }
     fclose(fmap);
+    Position* p = Map_find(map, '@');
+    if(p == NULL) {
+        printf("Hero is not positioned in map\n");
+        exit(1);
+    }
+    map->heroPosition = p;
     return map;
 }
 
