@@ -5,6 +5,11 @@ enum Moves {
     RIGHT = 'd'
 };
 
+enum Rounds {
+    PLAYER_ROUND = 'p',
+    GHOST_ROUND = 'g'
+};
+
 enum Characters {
     PLAYER = '@',
     GHOST = 'F',
@@ -33,3 +38,4 @@ typedef struct map Map;
 Map* Map_new(char* pathToMap);
 void Map_printf(Map* map);
 void Map_movePlayer(Map* map, char direction);
+int Map_checkLose(Map* m);
