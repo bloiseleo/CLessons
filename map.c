@@ -1,6 +1,3 @@
-#ifndef MAP_H
-#define MAP_H
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "filereading.h"
@@ -290,5 +287,3 @@ Map* Map_new(char* pathToMap) {
     playRound = PLAYER_ROUND;
     return map;
 }
-
-#endif

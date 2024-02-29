@@ -1,3 +1,5 @@
+#ifndef MAP_H
+#define MAP_H
 enum Moves {
     UP = 'w',
     DOWN = 's',
@@ -44,3 +46,5 @@ void Map_printf(Map* map);
 void Map_movePlayer(Map* map, char direction);
 int Map_checkLose(Map* m);
 void Map_explode(Map* map);
+
+#endif
