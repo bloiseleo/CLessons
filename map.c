@@ -10,17 +10,64 @@
 enum Rounds playRound;
 int pill = 0;
 
+void Map_explodeFrom(Map* map, int from, int to) {
+
+}
+
+int Map_isWall(int x, int y, Map* self) {
+    return self->map[x][y] == V_WALL || self->map[x][y] == H_WALL;
+}
+
 void Map_explode(Map* map) {
     if(pill <= 0) {
         return;
     }
     Position* p = map->heroPosition;
+    
     for(int i = p->y + 1; i < p->y + 4; i++) {
         if(i >= map->columns - 1) {
             break;
         }
+        if(Map_isWall(p->x, i, map)) {
+            continue;
+        }
         map->map[p->x][i] = FREE_SPACE;
     }
+
+    for(int i = p->y - 1; i > p->y - 4; i--) {
+        if(i <= 0) {
+            break;
+        }
+        if(Map_isWall(p->x, i, map)) {
+            continue;
+        }
+        map->map[p->x][i] = FREE_SPACE;
+    }
+
+    for (int i = p->x + 1; i < p->x + 4; i++)
+    {
+        if(i >= map->lines - 1) {
+            break;
+        }
+        if(Map_isWall(i, p->y, map)) {
+            continue;
+        }
+        map->map[i][p->y] = FREE_SPACE;
+    }
+
+    for (int i = p->x - 1; i > p->x - 4; i--)
+    {
+        if(i <= 0) {
+            break;
+        }
+        if(Map_isWall(i, p->y, map)) {
+            continue;
+        }
+        map->map[i][p->y] = FREE_SPACE;
+    }
+    
+    
+    
     pill--;
 }
 

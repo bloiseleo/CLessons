@@ -15,7 +15,9 @@ enum Characters {
     PLAYER = '@',
     GHOST = 'F',
     FREE_SPACE = '.',
-    PILL = 'P'
+    PILL = 'P',
+    H_WALL = '-',
+    V_WALL = '|'
 };
 
 struct position {
