@@ -8,7 +8,15 @@
 #include "random.h"
 
 enum Rounds playRound;
+int pill = 0;
 
+
+void Map_explode(Map* map) {
+    Position* p = map->heroPosition;
+    for(int i = p->y; i < map->columns; i++) {
+        map->map[p->x][i] = FREE_SPACE;
+    }
+}
 
 Position* Map_find(Map* map, char c) {
     int x;
@@ -45,6 +53,10 @@ int Map_canMove(int x, int y, Map* map) {
         if(v != FREE_SPACE && v == PLAYER) {
             return 1;
         }
+    }
+    if(map->map[x][y] == PILL)  {
+        pill++;
+        return 1;
     }
     if (map->map[x][y] != FREE_SPACE) {
         return 0;
@@ -100,15 +112,34 @@ void Map_findGhosts(Map* map) {
     map->ghostsSize = read;
 }
 
-char Map_generateDirection() {
-    enum Moves m[5] = {UP, DOWN, LEFT, RIGHT};
+char Map_generateDirection(Position gp, Position hp) {
+    int ra = random(5);
+    int rax = random(5);
+    if(rax > ra) {
+        int heightGpToHp = gp.x - hp.x;
+        int widthGpToHp = gp.y - hp.y;
+        if(heightGpToHp > 0) {
+            return UP;
+        }
+        if(heightGpToHp < 0) {
+            return DOWN;
+        }
+        if(widthGpToHp > 0) {
+            return LEFT;
+        }
+        if(widthGpToHp < 0) {
+            return RIGHT;
+        }
+    }
     int r = random(5);
+    enum Moves m[5] = {UP, DOWN, LEFT, RIGHT};
     return m[r];
 }
 
 int Map_moveGhost(int ghostIndex, Map* map) {
-    char d = Map_generateDirection();
     Position gp = map->ghostsPosition[ghostIndex];
+    Position* hp = map->heroPosition;
+    char d = Map_generateDirection(gp, *hp);
     Position* newGP = Map_applyDirection(map, d, &gp);
     if(!Map_canMove(newGP->x, newGP->y, map)){
         return 0;

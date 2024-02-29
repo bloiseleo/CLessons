@@ -2,7 +2,8 @@ enum Moves {
     UP = 'w',
     DOWN = 's',
     LEFT = 'a',
-    RIGHT = 'd'
+    RIGHT = 'd',
+    EXPLODE = 'b'
 };
 
 enum Rounds {
@@ -13,7 +14,8 @@ enum Rounds {
 enum Characters {
     PLAYER = '@',
     GHOST = 'F',
-    FREE_SPACE = '.'
+    FREE_SPACE = '.',
+    PILL = 'P'
 };
 
 struct position {
@@ -39,3 +41,4 @@ Map* Map_new(char* pathToMap);
 void Map_printf(Map* map);
 void Map_movePlayer(Map* map, char direction);
 int Map_checkLose(Map* m);
+void Map_explode(Map* map);
