@@ -3,6 +3,8 @@
 #include <time.h>
 #include "map.h"
 
+extern int pill;
+
 int end(Map* map) {
     return Map_checkLose(map);
 }
@@ -16,6 +18,7 @@ int main() {
     Map* map = Map_new("./mapa.txt");
     int score = 0;
     do {
+        printf("Pills: %d\n", pill);
         Map_printf(map);
         char direction;
         scanf(" %c", &direction);

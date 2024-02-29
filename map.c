@@ -10,12 +10,18 @@
 enum Rounds playRound;
 int pill = 0;
 
-
 void Map_explode(Map* map) {
+    if(pill <= 0) {
+        return;
+    }
     Position* p = map->heroPosition;
-    for(int i = p->y; i < map->columns; i++) {
+    for(int i = p->y + 1; i < p->y + 4; i++) {
+        if(i >= map->columns - 1) {
+            break;
+        }
         map->map[p->x][i] = FREE_SPACE;
     }
+    pill--;
 }
 
 Position* Map_find(Map* map, char c) {
