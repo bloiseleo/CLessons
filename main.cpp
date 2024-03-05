@@ -5,17 +5,11 @@ using namespace std;
 const string SECRET_WORD = "MELANCIA";
 
 bool existsInSecretWord(char chute) {
-    for (int i = 0; i < SECRET_WORD.length(); i++)
-    {
-        char c = SECRET_WORD[i];
+    for(char c: SECRET_WORD) {
         if(c == chute) {
             return true;
         }
     }
-    for(char c: SECRET_WORD) {
-        cout << c;
-    }
-    
     return false;
 }
 

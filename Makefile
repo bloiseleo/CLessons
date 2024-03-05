@@ -1,4 +1,4 @@
 GXXFLAGS= -std=c++11
 
-main: 
-	g++ ./main.cpp
+main.exe: main.cpp
+	g++ ./main.cpp -o main
